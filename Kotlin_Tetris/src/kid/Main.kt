@@ -8,13 +8,10 @@ import javafx.scene.Scene
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
-import kid.game.Direction
-import kid.game.GameMap
+import kid.game.*
 import kid.game.GameMap.moveTo
-import kid.game.GameRenderer
 import kid.game.GameRenderer.render
 import kid.game.GameRenderer.renderMap
-import kid.game.intersects
 
 class Main : Application()
 {
@@ -39,10 +36,7 @@ class Main : Application()
             }
         }
 
-        object : AnimationTimer()
-        {
-            override fun handle(l: Long) = render(gc = Controller.mainTool)
-        }.start()
+        GameFlowManager().start()
     }
 
     companion object

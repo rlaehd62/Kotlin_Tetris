@@ -1,25 +1,21 @@
 package kid.game
 
+import javafx.animation.AnimationTimer
 import javafx.application.Platform
 import javafx.scene.canvas.GraphicsContext
 import kid.Controller
 import kotlin.math.max
 
 const val size: Double = 20.0
-const val x_size: Int = 19
-const val y_size: Int = 20
-
 object GameRenderer
 {
     private val KEY = Any()
     fun render(gc: GraphicsContext)
     {
         Platform.runLater {
-            synchronized(KEY)
-            {
-                renderMap(gc)
-                renderBlock(gc)
-            }
+            renderMap(gc)
+            renderBlock(gc)
+            renderNextBlock(Controller.subTool)
         }
     }
 
@@ -52,6 +48,24 @@ object GameRenderer
             for (X in GameMap.map[0].indices)
             {
                 if (GameMap.map[Y][X] >= 1) gc.fillRect(X*size, Y*size, size - 1.0, size - 1.0)
+            }
+        }
+    }
+
+    private fun renderNextBlock(gc: GraphicsContext)
+    {
+        val temp = GameMap.nextBlock.data
+        val maxWidth = gc.canvas.width
+        val maxHeight = gc.canvas.height
+        gc.clearRect(0.0, 0.0, maxWidth, maxHeight)
+
+        for(Y in temp.indices step 1)
+        {
+            for (X in temp[Y].indices step 1)
+            {
+                val totalX = 4 + X
+                val totalY = 3 + Y
+                if (temp[Y][X] >= 1) gc.fillRect(totalX*size, totalY*size, size - 1.0, size - 1.0)
             }
         }
     }

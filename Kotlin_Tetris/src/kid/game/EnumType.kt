@@ -7,8 +7,8 @@ enum class BlockType
     L { override val block: BlockBase get() = Block.L() },
     J { override val block: BlockBase get() = Block.J() },
     T { override val block: BlockBase get() = Block.T() },
-    Z { override val block: BlockBase get() = Block.L() },  // TODO
-    S { override val block: BlockBase get() = Block.L() };  // TODO
+    Z { override val block: BlockBase get() = Block.Z() },
+    S { override val block: BlockBase get() = Block.S() };
     abstract val block: BlockBase
 }
 
