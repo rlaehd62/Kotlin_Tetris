@@ -182,13 +182,45 @@ object GameMap
 
         reset()
         next()
+        clear()
+    }
+
+    private tailrec fun clear()
+    {
+        fun clearRow(y: Int) { map[y] = IntArray(x_size) { 0 } }
+        fun isLined(y: Int): Boolean
+        {
+            for(x in map[y].indices) if(map[y][x] <= 0) return false
+            return true
+        }
+
+        var count = 0
+        for(y in map.indices.reversed())
+        {
+            if(isLined(y))
+            {
+                clearRow(y)
+                count++
+            }
+        }
+
+        if(count > 0) clear()
     }
 
 
-    private fun reset()
+    private fun reset(totally: Boolean = false)
     {
         x = (x_size) / 3
         y = 0
+
+        if(totally)
+        {
+            GameFlowManager.stop()
+            for(y in map.indices) for(x in map[y].indices) map[y][x] = 0
+            currentBlock = Block.random()
+            nextBlock = Block.random()
+            GameFlowManager.start()
+        }
     }
 
     private fun next()

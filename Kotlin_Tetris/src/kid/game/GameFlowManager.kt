@@ -3,7 +3,7 @@ package kid.game
 import javafx.animation.AnimationTimer
 import kid.Controller
 
-class GameFlowManager: AnimationTimer()
+object GameFlowManager: AnimationTimer()
 {
     private var tick = 0
     private val mainGC = Controller.mainTool

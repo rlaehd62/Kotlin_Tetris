@@ -36,7 +36,7 @@ class Main : Application()
             }
         }
 
-        GameFlowManager().start()
+        GameFlowManager.start()
     }
 
     companion object
