@@ -25,3 +25,15 @@ fun intersects(x: Int, y: Int, isRotated: Boolean = false): Boolean
 
     return false
 }
+
+fun merges(data: Array<Array<Int>>)
+{
+    for(i in data.indices)
+        for(j in data[i].indices)
+        {
+            val posX = GameMap.x + j
+            val posY = GameMap.y + i
+            val exists = data[i][j] >= 1
+            if(exists && GameMap.map[posY][posX] == 0) GameMap.map[posY][posX] = 1
+        }
+}

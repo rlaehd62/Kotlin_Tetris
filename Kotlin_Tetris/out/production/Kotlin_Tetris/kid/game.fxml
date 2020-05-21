@@ -18,7 +18,7 @@
                   <Font name="NanumGothicBold" size="14.0" />
                </font>
             </Label>
-            <TextField editable="false" layoutX="47.0" layoutY="19.0" prefHeight="22.0" prefWidth="132.0" />
+            <TextField fx:id="score" editable="false" layoutX="47.0" layoutY="19.0" prefHeight="22.0" prefWidth="132.0" />
             <Label layoutX="68.0" layoutY="99.0" text="다음 블럭">
                <font>
                   <Font name="NanumGothic" size="14.0" />

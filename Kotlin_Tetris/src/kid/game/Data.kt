@@ -1,9 +1,9 @@
 package kid.game
 
+import javafx.application.Platform
+import javafx.scene.control.Alert
+import kid.Controller
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.math.abs
-import kotlin.properties.Delegates
 
 
 abstract class BlockBase
@@ -39,6 +39,7 @@ abstract class BlockBase
     }
 
 }
+
 sealed class Block
 {
     companion object
@@ -135,28 +136,27 @@ sealed class Block
     }
 }
 
-
 const val x_size: Int = 19
 const val y_size: Int = 20
 object GameMap
 {
     // [TODO-0] http://oopsilon.com/06/texts/tetris.html 참고하기
-    // [TODO-2] ~ [TODO-5] Completed
-    // [TODO-6] 한 줄 완성되면 클리어하고 블럭 떨어트리기
-    // [TODO-7] 완성된 줄 만큼 점수 추가하기
-    // [TODO-8] 게임오버 추가하고, 게임 오버되면 리셋기능 추가하기
+    // [TODO-2] ~ [TODO-8] Completed
 
     val map = Array(y_size) {IntArray(x_size)}
     var currentBlock: BlockBase = Block.random()
-    private set
+        private set
 
     var nextBlock: BlockBase = Block.random()
-    private set
+        private set
 
     var x = (x_size / 3)
-    var y = 0
+        private set
 
-    fun moveTo(dir: Direction)
+    var y = 0
+        private set
+
+    fun moveTo(dir: Direction, only_move: Boolean = false)
     {
         when(dir)
         {
@@ -164,25 +164,23 @@ object GameMap
             else -> if(!intersects(x, y+dir.value)) y += dir.value
         }
 
-        if(intersects(x, y+1)) merge()
+        if(only_move) return
+        else if(intersects(x, y+1)) merge()
     }
 
     private fun merge()
     {
         val currBlock = currentBlock.data
-        for(i in currBlock.indices)
-            for(j in currBlock[i].indices)
-            {
-                val posX = x + j
-                val posY = y + i
+        merges(currBlock)
 
-                val exists = currBlock[i][j] >= 1
-                if(exists && map[posY][posX] == 0) map[posY][posX] = 1
-            }
+        if(gameOver()) GameFlowManager.reset()
+        else
+        {
+            reset()
+            next()
+            clear()
+        }
 
-        reset()
-        next()
-        clear()
     }
 
     private tailrec fun clear()
@@ -200,26 +198,52 @@ object GameMap
             if(isLined(y))
             {
                 clearRow(y)
+                drop(y)
                 count++
             }
         }
 
-        if(count > 0) clear()
+        if(count > 0)
+        {
+            Controller.addScore(count * 100)
+            Controller.updateScore()
+            clear()
+        }
     }
 
+    private fun drop(y1: Int)
+    {
+        var queue: Queue<Int> = LinkedList()
+        for(x in map[0].indices)
+        {
+            for(y in 0 until y1)
+            {
+                queue.offer(map[y][x])
+                map[y][x] = 0
+            }
 
-    private fun reset(totally: Boolean = false)
+            queue = LinkedList(queue.reversed())
+            for(y in y1 downTo 0)
+            {
+                if(queue.isEmpty()) break
+                else map[y][x] = queue.poll()
+            }
+
+            queue.removeAll(queue)
+        }
+    }
+
+    fun reset(totally: Boolean = false)
     {
         x = (x_size) / 3
-        y = 0
+        y = -1
 
         if(totally)
         {
-            GameFlowManager.stop()
+            Controller.alert()
             for(y in map.indices) for(x in map[y].indices) map[y][x] = 0
             currentBlock = Block.random()
             nextBlock = Block.random()
-            GameFlowManager.start()
         }
     }
 
@@ -227,6 +251,15 @@ object GameMap
     {
         BlockBase.copy(nextBlock, currentBlock)
         BlockBase.copy(Block.random(), nextBlock)
+    }
+
+    private fun gameOver(): Boolean
+    {
+        for(y in 3 downTo 0)
+            for(x in map[y].indices)
+                if(map[y][x] >= 1) return true
+
+        return false
     }
 
     fun calculateX(value: Int): Int

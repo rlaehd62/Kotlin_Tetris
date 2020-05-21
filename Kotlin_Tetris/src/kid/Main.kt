@@ -2,6 +2,7 @@ package kid
 
 import javafx.animation.AnimationTimer
 import javafx.application.Application
+import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -33,6 +34,15 @@ class Main : Application()
                 KeyCode.A -> moveTo(Direction.LEFT)
                 KeyCode.D -> moveTo(Direction.RIGHT)
                 KeyCode.S -> moveTo(Direction.DOWN)
+                KeyCode.SPACE ->
+                {
+                    Platform.runLater()
+                    {
+                        var count = 1
+                        while(!intersects(GameMap.x, GameMap.y + count++));
+                        for(i in 0 until count) moveTo(Direction.DOWN)
+                    }
+                }
             }
         }
 
