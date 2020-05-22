@@ -24,11 +24,6 @@ object GameFlowManager: AnimationTimer()
     fun reset()
     {
         stop()
-
-        GameMap.reset(true)
-        Controller.addScore(reset = true)
-        Controller.updateScore()
-
-        start()
+        Controller.alert()
     }
 }

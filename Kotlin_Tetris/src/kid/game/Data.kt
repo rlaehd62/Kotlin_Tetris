@@ -1,7 +1,5 @@
 package kid.game
 
-import javafx.application.Platform
-import javafx.scene.control.Alert
 import kid.Controller
 import java.util.*
 
@@ -173,7 +171,7 @@ object GameMap
         val currBlock = currentBlock.data
         merges(currBlock)
 
-        if(gameOver()) GameFlowManager.reset()
+        if(isFull()) GameFlowManager.reset()
         else
         {
             reset()
@@ -240,11 +238,17 @@ object GameMap
 
         if(totally)
         {
-            Controller.alert()
-            for(y in map.indices) for(x in map[y].indices) map[y][x] = 0
             currentBlock = Block.random()
             nextBlock = Block.random()
+            resetMap()
         }
+    }
+
+
+
+    private fun resetMap()
+    {
+        for(y in map.indices) for(x in map[y].indices) map[y][x] = 0
     }
 
     private fun next()
@@ -253,7 +257,7 @@ object GameMap
         BlockBase.copy(Block.random(), nextBlock)
     }
 
-    private fun gameOver(): Boolean
+    private fun isFull(): Boolean
     {
         for(y in 3 downTo 0)
             for(x in map[y].indices)

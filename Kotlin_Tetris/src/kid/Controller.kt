@@ -8,6 +8,8 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.control.Alert
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
+import kid.game.GameFlowManager
+import kid.game.GameMap
 import java.net.URL
 import java.util.*
 import kotlin.properties.Delegates
@@ -32,14 +34,19 @@ class Controller : Initializable
         lateinit var subTool: GraphicsContext
         lateinit var updateScore: () -> (Unit)
 
-        var scoreNum = 0
+        var scoreNum = 100
         var width by Delegates.notNull<Double>()
         var height by Delegates.notNull<Double>()
 
-        fun addScore(value: Int = 0, reset: Boolean = false)
+        fun addScore(value: Int)
         {
-            if(reset) scoreNum = 0
-            else scoreNum += value
+            scoreNum += value
+        }
+
+        private fun resetScore()
+        {
+            addScore(-scoreNum)
+            updateScore()
         }
 
         fun alert()
@@ -50,6 +57,10 @@ class Controller : Initializable
                 alert.title = "Game Over!"
                 alert.contentText = "당신의 점수는 ${scoreNum}점!"
                 alert.showAndWait()
+
+                resetScore()
+                GameMap.reset(true)
+                GameFlowManager.start()
             }
         }
     }
